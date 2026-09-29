@@ -1,0 +1,21 @@
+# .gitignore do workspace de um cliente.
+# O workspace é um repositório privado próprio. Dado pessoal de contato fica no Drive, não no git.
+
+# segredos
+.env
+
+# o que o cliente mandou, como veio (PDF, transcrição, export): fica só na máquina do operador
+contexto/fontes/*
+!contexto/fontes/.gitkeep
+
+# planilhas de validação e exports em xlsx
+*.xlsx
+
+# snapshots CSV do ledger (dado pessoal de contato): o do fim da rodada e os que a supressão usa
+rodadas/*/ledger/
+rodadas/*/_snapshot/
+
+# listas de supressão têm email e perfil de LinkedIn (dado pessoal): ficam fora do git,
+# como o ledger. A cópia de trabalho vive na aba supressao do ledger.
+supressao/*
+!supressao/.gitkeep

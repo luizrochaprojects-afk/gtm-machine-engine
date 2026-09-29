@@ -1,0 +1,1101 @@
+{
+  "version": "3.0.0",
+  "metadata": {
+    "exportedAt": "2026-10-01T00:00:00.000Z",
+    "nodeCount": 20,
+    "edgeCount": 22
+  },
+  "flow": {
+    "nodes": [
+      {
+        "id": "profile_visit-2000000000001",
+        "type": "profile_visit",
+        "position": {
+          "x": 391,
+          "y": 12
+        },
+        "data": {
+          "meta": {
+            "type": "profile_visit",
+            "title": "Visit Profile",
+            "description": "View prospect's LinkedIn profile",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-visit-"
+          },
+          "config": {
+            "delayValue": 15,
+            "delayUnit": "minutes"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "send_invite-2000000000002",
+        "type": "send_invite",
+        "position": {
+          "x": 391,
+          "y": 186
+        },
+        "data": {
+          "meta": {
+            "type": "send_invite",
+            "title": "Send Connection Request",
+            "description": "Send a connection request to prospect",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-invite-",
+            "selectionLimit": 1
+          },
+          "config": {
+            "delayValue": 1,
+            "delayUnit": "days",
+            "useAI": true,
+            "tone": "Moderate",
+            "formality": "Approachable",
+            "approach": "Direct",
+            "focus": "Business",
+            "intention": "Networking",
+            "callToAction": "Subtle",
+            "personalization": "Specific",
+            "language": "portuguese",
+            "mentionPost": false,
+            "customGuidelines": "Você escreve a nota que acompanha o pedido de conexão no LinkedIn em nome de Carla, da Acme.\n\nQuem recebe: {{first_name}}, {{title}} na {{company}}.\n\nA nota serve apenas para pedir a conexão. Nada de produto, de reunião ou do nome Acme.\n\nTamanho: até 200 caracteres, uma ou duas frases, no máximo uma pergunta.\n\nSoa certo:\n\"Oi {{first_name}}, trabalho com reposição e recompra em e-commerce de consumo. Posso te adicionar?\"\n\nSoa errado:\n\"Quero te mostrar como aumentar sua recompra.\" (pitch)\n\"Notei que a {{company}} cresceu muito.\" (abertura de robô e elogio vazio)\n\nProibido: travessão, ponto de exclamação, assinatura.\n\nDevolva apenas o texto final, sem aspas.",
+            "message": "Oi {{first_name}}, trabalho com reposição e recompra em e-commerce de consumo, numa operação parecida com a da {{company}}. Posso te adicionar?"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "linkedin_request_accepted-2000000000003",
+        "type": "linkedin_request_accepted",
+        "position": {
+          "x": 391,
+          "y": 360
+        },
+        "data": {
+          "meta": {
+            "type": "linkedin_request_accepted",
+            "title": "Connection Request Accepted?",
+            "description": "Check if connection request was accepted",
+            "category": "condition",
+            "nodeCategoryType": "condition",
+            "inputs": 1,
+            "outputs": 2,
+            "delayModes": [
+              "fixed",
+              "waitUntil"
+            ],
+            "styleKey": "condition-linkedin-",
+            "branchable": true,
+            "defaultBranches": [
+              {
+                "id": "yes",
+                "label": "Yes",
+                "colour": "#16a34a"
+              },
+              {
+                "id": "no",
+                "label": "No",
+                "colour": "#dc2626"
+              }
+            ]
+          },
+          "config": {
+            "delayValue": 14,
+            "delayUnit": "days"
+          },
+          "mergeNodeId": "merge-2000000000004",
+          "delayMode": "fixed",
+          "branches": [
+            {
+              "id": "yes",
+              "label": "Yes",
+              "colour": "#16a34a"
+            },
+            {
+              "id": "no",
+              "label": "No",
+              "colour": "#dc2626"
+            }
+          ],
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 78
+        },
+        "selected": false
+      },
+      {
+        "id": "merge-2000000000004",
+        "type": "merge",
+        "position": {
+          "x": 520,
+          "y": 2168
+        },
+        "data": {
+          "branches": [
+            {
+              "id": "yes",
+              "label": "Yes",
+              "colour": "#16a34a"
+            },
+            {
+              "id": "no",
+              "label": "No",
+              "colour": "#dc2626"
+            }
+          ],
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 15,
+          "height": 15
+        },
+        "selectable": false,
+        "draggable": false,
+        "focusable": false,
+        "selected": false
+      },
+      {
+        "id": "like_post-2000000000005",
+        "type": "like_post",
+        "position": {
+          "x": 588,
+          "y": 712
+        },
+        "data": {
+          "meta": {
+            "type": "like_post",
+            "title": "Like Recent Post",
+            "description": "Like prospect's most recent post",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-like-"
+          },
+          "config": {
+            "delayValue": 2,
+            "delayUnit": "days",
+            "useAI": true,
+            "postCount": 1,
+            "recentPostWithin": 7
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "withdraw_request-2000000000006",
+        "type": "withdraw_request",
+        "position": {
+          "x": 588,
+          "y": 886
+        },
+        "data": {
+          "meta": {
+            "type": "withdraw_request",
+            "title": "Withdraw Request",
+            "description": "Withdraw a connection request",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-withdraw-"
+          },
+          "config": {
+            "delayValue": 1,
+            "delayUnit": "days"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "send_invite-2000000000007",
+        "type": "send_invite",
+        "position": {
+          "x": 588,
+          "y": 1062
+        },
+        "data": {
+          "meta": {
+            "type": "send_invite",
+            "title": "Send Connection Request",
+            "description": "Send a connection request to prospect",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-invite-",
+            "selectionLimit": 1
+          },
+          "config": {},
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "like_post-2000000000008",
+        "type": "like_post",
+        "position": {
+          "x": 588,
+          "y": 1238
+        },
+        "data": {
+          "meta": {
+            "type": "like_post",
+            "title": "Like Recent Post",
+            "description": "Like prospect's most recent post",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-like-"
+          },
+          "config": {
+            "delayValue": 1,
+            "delayUnit": "days",
+            "recentPostWithin": 14
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "like_post-2000000000009",
+        "type": "like_post",
+        "position": {
+          "x": -396,
+          "y": 538
+        },
+        "data": {
+          "meta": {
+            "type": "like_post",
+            "title": "Like Recent Post",
+            "description": "Like prospect's most recent post",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-like-"
+          },
+          "config": {
+            "delayValue": 2,
+            "delayUnit": "days",
+            "useAI": true,
+            "postCount": 1,
+            "recentPostWithin": 7
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "comment_post-2000000000010",
+        "type": "comment_post",
+        "position": {
+          "x": -396,
+          "y": 712
+        },
+        "data": {
+          "meta": {
+            "type": "comment_post",
+            "title": "Comment on Post",
+            "description": "Comment on prospect's recent post",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-comment-"
+          },
+          "config": {
+            "delayValue": 15,
+            "delayUnit": "minutes",
+            "postCount": 1,
+            "recentPostWithin": 7,
+            "useAI": true,
+            "length": "short(1 sentence)",
+            "commentTone": "neutral",
+            "language": "portuguese",
+            "contentBlacklist": false,
+            "blackListCategories": [],
+            "contentType": [],
+            "priorityKeyword": [],
+            "commentStyle": "",
+            "customGuidelines": "Escreva um comentário curto sobre a publicação mais nova de {{first_name}}.\n\nAté 100 caracteres, uma frase. Registro de negócio, de quem vive a operação; nunca dica operacional nem elogio.\n\nSoa certo:\n\"Reposição que chega depois do fim do produto vira compra no concorrente.\"\n\"O lembrete certo chega uma semana antes, não no mês seguinte.\"\n\nSoa errado:\n\"Muito bom, adorei o texto.\" (elogio vazio)\n\"A Acme resolve isso.\" (produto)\nPerguntas de venda, de qualquer tipo.\n\nNão usar travessão nem exclamação.\n\nDevolva apenas o texto final, sem aspas.",
+            "customComment": "Reposição que chega depois do fim do produto vira compra no concorrente."
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "send_followup-2000000000012",
+        "type": "send_followup",
+        "position": {
+          "x": -396,
+          "y": 886
+        },
+        "data": {
+          "meta": {
+            "type": "send_followup",
+            "title": "Send Message",
+            "description": "Send a personalized message to your connection",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-message-"
+          },
+          "config": {
+            "delayValue": 1,
+            "delayUnit": "days",
+            "useAI": true,
+            "isFollowUp": true,
+            "messageLength": "short",
+            "tone": "casual",
+            "language": "portuguese",
+            "mentionPost": false,
+            "customGuidelines": "Primeira DM de Carla, logo depois que {{first_name}} aceitou a conexão.\n\nQuem recebe: {{first_name}}, {{title}} na {{company}}.\n\nAssunto: o intervalo de reposição dos produtos da {{company}}, falado em receita, nunca em ferramenta ou disparo. Sem venda, sem apresentar a Acme, sem pedir horário.\n\nFormato: 3 frases, até 45 palavras, saudação sozinha na primeira linha. A frase 2 é uma observação de quem conhece a operação, dita como óbvia. A frase 3 é uma pergunta só, de sim ou não.\n\nExemplo:\n\"Oi {{first_name}},\nProduto que acaba em 30 dias costuma receber o lembrete no dia 45, quando o cliente já comprou em outro lugar.\nHoje vocês sabem em que dia cada cliente fica sem produto?\"\n\nProibido: \"Vi que\", \"Notei que\", travessão, ponto de exclamação, pedir call.\n\nDevolva apenas o texto final, sem aspas.",
+            "message": "Oi {{first_name}},\nProduto que acaba em 30 dias costuma receber o lembrete no dia 45, quando o cliente já comprou em outro lugar.\nHoje a {{company}} sabe em que dia cada cliente fica sem produto?"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "is_replied_on_linkedin-2000000000011",
+        "type": "is_replied_on_linkedin",
+        "position": {
+          "x": -396,
+          "y": 1060
+        },
+        "data": {
+          "meta": {
+            "type": "is_replied_on_linkedin",
+            "title": "Replied on LinkedIn?",
+            "description": "Check if replied on LinkedIn",
+            "category": "condition",
+            "nodeCategoryType": "condition",
+            "inputs": 1,
+            "outputs": 2,
+            "delayModes": [
+              "fixed",
+              "waitUntil"
+            ],
+            "styleKey": "condition-linkedin-",
+            "branchable": true,
+            "defaultBranches": [
+              {
+                "id": "yes",
+                "label": "Yes",
+                "colour": "#16a34a"
+              },
+              {
+                "id": "no",
+                "label": "No",
+                "colour": "#dc2626"
+              }
+            ]
+          },
+          "config": {
+            "delayValue": 7,
+            "delayUnit": "days"
+          },
+          "mergeNodeId": "merge-2000000000011",
+          "delayMode": "fixed",
+          "branches": [
+            {
+              "id": "yes",
+              "label": "Yes",
+              "colour": "#16a34a"
+            },
+            {
+              "id": "no",
+              "label": "No",
+              "colour": "#dc2626"
+            }
+          ],
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 78
+        },
+        "selected": false
+      },
+      {
+        "id": "merge-2000000000011",
+        "type": "merge",
+        "position": {
+          "x": -267,
+          "y": 2053
+        },
+        "data": {
+          "branches": [
+            {
+              "id": "yes",
+              "label": "Yes",
+              "colour": "#16a34a"
+            },
+            {
+              "id": "no",
+              "label": "No",
+              "colour": "#dc2626"
+            }
+          ],
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 15,
+          "height": 15
+        },
+        "selectable": false,
+        "draggable": false,
+        "focusable": false,
+        "selected": false
+      },
+      {
+        "id": "add_update_tag-2000000000013",
+        "type": "add_update_tag",
+        "position": {
+          "x": -679,
+          "y": 1412
+        },
+        "data": {
+          "meta": {
+            "type": "add_update_tag",
+            "title": "Add/Update Tag",
+            "description": "Replace the lead's tag with the chosen tag",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-tag-"
+          },
+          "config": {
+            "delayValue": 15,
+            "delayUnit": "minutes",
+            "tagId": "",
+            "tagName": "Follow Up Required",
+            "tagColor": "#EA580C"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "like_post-2000000000015",
+        "type": "like_post",
+        "position": {
+          "x": -2,
+          "y": 1238
+        },
+        "data": {
+          "meta": {
+            "type": "like_post",
+            "title": "Like Recent Post",
+            "description": "Like prospect's most recent post",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-like-"
+          },
+          "config": {
+            "delayValue": 3,
+            "delayUnit": "days",
+            "useAI": true,
+            "postCount": 1,
+            "recentPostWithin": 7
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "send_followup-2000000000016",
+        "type": "send_followup",
+        "position": {
+          "x": -2,
+          "y": 1412
+        },
+        "data": {
+          "meta": {
+            "type": "send_followup",
+            "title": "Send Message",
+            "description": "Send a personalized message to your connection",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-message-"
+          },
+          "config": {
+            "delayValue": 1,
+            "delayUnit": "days",
+            "useAI": true,
+            "isFollowUp": true,
+            "messageLength": "short",
+            "tone": "casual",
+            "language": "portuguese",
+            "mentionPost": false,
+            "customGuidelines": "Segunda DM de Carla, enviada quando a primeira ficou sem retorno.\n\nQuem recebe: {{first_name}}, {{title}} na {{company}}.\n\nAgora oferece algo pequeno e concreto: uma leitura do intervalo de recompra feita a partir do histórico de pedidos, sem proposta junto. Oferece trabalho, não uma reunião, e traz um ângulo diferente do da primeira DM.\n\nFormato: 2 ou 3 frases, até 40 palavras, saudação sozinha na primeira linha. Termina numa pergunta só, de sim ou não.\n\nExemplo:\n\"Oi {{first_name}},\nCom o histórico de pedidos dá para ver, por produto, o dia em que o cliente costuma voltar e quantos não voltam.\nQuer que eu faça essa leitura?\"\n\nProibido: dizer que é retorno, perguntar se viu a mensagem, travessão, ponto de exclamação, prometer material que ainda não existe.\n\nDevolva apenas o texto final, sem aspas.",
+            "message": "Oi {{first_name}},\nCom o histórico de pedidos dá para ver, por produto, o dia em que o cliente costuma voltar e quantos não voltam.\nQuer que eu faça essa leitura para a {{company}}?"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "is_replied_on_linkedin-2000000000014",
+        "type": "is_replied_on_linkedin",
+        "position": {
+          "x": -2,
+          "y": 1586
+        },
+        "data": {
+          "meta": {
+            "type": "is_replied_on_linkedin",
+            "title": "Replied on LinkedIn?",
+            "description": "Check if replied on LinkedIn",
+            "category": "condition",
+            "nodeCategoryType": "condition",
+            "inputs": 1,
+            "outputs": 2,
+            "delayModes": [
+              "fixed",
+              "waitUntil"
+            ],
+            "styleKey": "condition-linkedin-",
+            "branchable": true,
+            "defaultBranches": [
+              {
+                "id": "yes",
+                "label": "Yes",
+                "colour": "#16a34a"
+              },
+              {
+                "id": "no",
+                "label": "No",
+                "colour": "#dc2626"
+              }
+            ]
+          },
+          "config": {
+            "delayValue": 7,
+            "delayUnit": "days"
+          },
+          "mergeNodeId": "merge-2000000000014",
+          "delayMode": "fixed",
+          "branches": [
+            {
+              "id": "yes",
+              "label": "Yes",
+              "colour": "#16a34a"
+            },
+            {
+              "id": "no",
+              "label": "No",
+              "colour": "#dc2626"
+            }
+          ],
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 78
+        },
+        "selected": false
+      },
+      {
+        "id": "merge-2000000000014",
+        "type": "merge",
+        "position": {
+          "x": 126,
+          "y": 1938
+        },
+        "data": {
+          "branches": [
+            {
+              "id": "yes",
+              "label": "Yes",
+              "colour": "#16a34a"
+            },
+            {
+              "id": "no",
+              "label": "No",
+              "colour": "#dc2626"
+            }
+          ],
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 15,
+          "height": 15
+        },
+        "selectable": false,
+        "draggable": false,
+        "focusable": false,
+        "selected": false
+      },
+      {
+        "id": "add_update_tag-2000000000017",
+        "type": "add_update_tag",
+        "position": {
+          "x": -199,
+          "y": 1764
+        },
+        "data": {
+          "meta": {
+            "type": "add_update_tag",
+            "title": "Add/Update Tag",
+            "description": "Replace the lead's tag with the chosen tag",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-tag-"
+          },
+          "config": {
+            "delayValue": 15,
+            "delayUnit": "minutes",
+            "tagId": "",
+            "tagName": "Follow Up Required",
+            "tagColor": "#EA580C"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      },
+      {
+        "id": "add_update_tag-2000000000018",
+        "type": "add_update_tag",
+        "position": {
+          "x": 194,
+          "y": 1764
+        },
+        "data": {
+          "meta": {
+            "type": "add_update_tag",
+            "title": "Add/Update Tag",
+            "description": "Replace the lead's tag with the chosen tag",
+            "category": "action",
+            "nodeCategoryType": "action",
+            "inputs": 1,
+            "outputs": 1,
+            "delayModes": [
+              "fixed"
+            ],
+            "styleKey": "action-tag-"
+          },
+          "config": {
+            "delayValue": 15,
+            "delayUnit": "minutes",
+            "tagId": "",
+            "tagName": "Cold Lead",
+            "tagColor": "#3B82F6"
+          },
+          "mergeNodeId": null,
+          "delayMode": "fixed",
+          "animationState": "stable"
+        },
+        "measured": {
+          "width": 274,
+          "height": 74
+        },
+        "selected": false
+      }
+    ],
+    "edges": [
+      {
+        "id": "profile_visit-2000000000001-send_invite-2000000000002",
+        "source": "profile_visit-2000000000001",
+        "target": "send_invite-2000000000002",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "profile_visit-2000000000001",
+            "targetId": "send_invite-2000000000002"
+          }
+        }
+      },
+      {
+        "id": "send_invite-2000000000002-linkedin_request_accepted-2000000000003",
+        "source": "send_invite-2000000000002",
+        "target": "linkedin_request_accepted-2000000000003",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "send_invite-2000000000002",
+            "targetId": "linkedin_request_accepted-2000000000003"
+          }
+        }
+      },
+      {
+        "id": "linkedin_request_accepted-2000000000003-like_post-2000000000009",
+        "source": "linkedin_request_accepted-2000000000003",
+        "target": "like_post-2000000000009",
+        "type": "buttonedge",
+        "sourceHandle": "yes",
+        "data": {
+          "label": "Yes",
+          "pluscontext": {
+            "type": "branch-yes",
+            "sourceId": "linkedin_request_accepted-2000000000003",
+            "targetId": "like_post-2000000000009"
+          }
+        }
+      },
+      {
+        "id": "linkedin_request_accepted-2000000000003-like_post-2000000000005",
+        "source": "linkedin_request_accepted-2000000000003",
+        "target": "like_post-2000000000005",
+        "type": "buttonedge",
+        "sourceHandle": "no",
+        "data": {
+          "label": "No",
+          "pluscontext": {
+            "type": "branch-no",
+            "sourceId": "linkedin_request_accepted-2000000000003",
+            "targetId": "like_post-2000000000005"
+          }
+        }
+      },
+      {
+        "id": "like_post-2000000000005-withdraw_request-2000000000006",
+        "source": "like_post-2000000000005",
+        "target": "withdraw_request-2000000000006",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "like_post-2000000000005",
+            "targetId": "withdraw_request-2000000000006"
+          }
+        }
+      },
+      {
+        "id": "withdraw_request-2000000000006-send_invite-2000000000007",
+        "source": "withdraw_request-2000000000006",
+        "target": "send_invite-2000000000007",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "withdraw_request-2000000000006",
+            "targetId": "send_invite-2000000000007"
+          }
+        }
+      },
+      {
+        "id": "send_invite-2000000000007-like_post-2000000000008",
+        "source": "send_invite-2000000000007",
+        "target": "like_post-2000000000008",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "send_invite-2000000000007",
+            "targetId": "like_post-2000000000008"
+          }
+        }
+      },
+      {
+        "id": "like_post-2000000000008-merge-2000000000004",
+        "source": "like_post-2000000000008",
+        "target": "merge-2000000000004",
+        "type": "buttonedge",
+        "targetHandle": "no"
+      },
+      {
+        "id": "like_post-2000000000009-comment_post-2000000000010",
+        "source": "like_post-2000000000009",
+        "target": "comment_post-2000000000010",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "like_post-2000000000009",
+            "targetId": "comment_post-2000000000010"
+          }
+        }
+      },
+      {
+        "id": "comment_post-2000000000010-send_followup-2000000000012",
+        "source": "comment_post-2000000000010",
+        "target": "send_followup-2000000000012",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "comment_post-2000000000010",
+            "targetId": "send_followup-2000000000012"
+          }
+        }
+      },
+      {
+        "id": "send_followup-2000000000012-is_replied_on_linkedin-2000000000011",
+        "source": "send_followup-2000000000012",
+        "target": "is_replied_on_linkedin-2000000000011",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "send_followup-2000000000012",
+            "targetId": "is_replied_on_linkedin-2000000000011"
+          }
+        }
+      },
+      {
+        "id": "is_replied_on_linkedin-2000000000011-add_update_tag-2000000000013",
+        "source": "is_replied_on_linkedin-2000000000011",
+        "target": "add_update_tag-2000000000013",
+        "type": "buttonedge",
+        "sourceHandle": "yes",
+        "data": {
+          "label": "Yes",
+          "pluscontext": {
+            "type": "branch-yes",
+            "sourceId": "is_replied_on_linkedin-2000000000011",
+            "targetId": "add_update_tag-2000000000013"
+          }
+        }
+      },
+      {
+        "id": "add_update_tag-2000000000013-merge-2000000000011",
+        "source": "add_update_tag-2000000000013",
+        "target": "merge-2000000000011",
+        "type": "buttonedge",
+        "targetHandle": "yes"
+      },
+      {
+        "id": "is_replied_on_linkedin-2000000000011-like_post-2000000000015",
+        "source": "is_replied_on_linkedin-2000000000011",
+        "target": "like_post-2000000000015",
+        "type": "buttonedge",
+        "sourceHandle": "no",
+        "data": {
+          "label": "No",
+          "pluscontext": {
+            "type": "branch-no",
+            "sourceId": "is_replied_on_linkedin-2000000000011",
+            "targetId": "like_post-2000000000015"
+          }
+        }
+      },
+      {
+        "id": "like_post-2000000000015-send_followup-2000000000016",
+        "source": "like_post-2000000000015",
+        "target": "send_followup-2000000000016",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "like_post-2000000000015",
+            "targetId": "send_followup-2000000000016"
+          }
+        }
+      },
+      {
+        "id": "send_followup-2000000000016-is_replied_on_linkedin-2000000000014",
+        "source": "send_followup-2000000000016",
+        "target": "is_replied_on_linkedin-2000000000014",
+        "type": "buttonedge",
+        "data": {
+          "pluscontext": {
+            "type": "edge",
+            "sourceId": "send_followup-2000000000016",
+            "targetId": "is_replied_on_linkedin-2000000000014"
+          }
+        }
+      },
+      {
+        "id": "is_replied_on_linkedin-2000000000014-add_update_tag-2000000000017",
+        "source": "is_replied_on_linkedin-2000000000014",
+        "target": "add_update_tag-2000000000017",
+        "type": "buttonedge",
+        "sourceHandle": "yes",
+        "data": {
+          "label": "Yes",
+          "pluscontext": {
+            "type": "branch-yes",
+            "sourceId": "is_replied_on_linkedin-2000000000014",
+            "targetId": "add_update_tag-2000000000017"
+          }
+        }
+      },
+      {
+        "id": "add_update_tag-2000000000017-merge-2000000000014",
+        "source": "add_update_tag-2000000000017",
+        "target": "merge-2000000000014",
+        "type": "buttonedge",
+        "targetHandle": "yes"
+      },
+      {
+        "id": "is_replied_on_linkedin-2000000000014-add_update_tag-2000000000018",
+        "source": "is_replied_on_linkedin-2000000000014",
+        "target": "add_update_tag-2000000000018",
+        "type": "buttonedge",
+        "sourceHandle": "no",
+        "data": {
+          "label": "No",
+          "pluscontext": {
+            "type": "branch-no",
+            "sourceId": "is_replied_on_linkedin-2000000000014",
+            "targetId": "add_update_tag-2000000000018"
+          }
+        }
+      },
+      {
+        "id": "add_update_tag-2000000000018-merge-2000000000014",
+        "source": "add_update_tag-2000000000018",
+        "target": "merge-2000000000014",
+        "type": "buttonedge",
+        "targetHandle": "no"
+      },
+      {
+        "id": "merge-2000000000014-merge-2000000000011",
+        "source": "merge-2000000000014",
+        "target": "merge-2000000000011",
+        "type": "buttonedge",
+        "targetHandle": "no"
+      },
+      {
+        "id": "merge-2000000000011-merge-2000000000004",
+        "source": "merge-2000000000011",
+        "target": "merge-2000000000004",
+        "type": "buttonedge",
+        "targetHandle": "yes"
+      }
+    ]
+  }
+}

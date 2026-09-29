@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gtm-machine/schemas/syndie-flow.schema.json",
+  "title": "Fluxo da Syndie (formato de importação 3.0.0)",
+  "description": "Formato de exportação e importação de fluxo da Syndie, levantado a partir de dois fluxos exportados que já rodaram (20 nós e 22 arestas cada). Regras que o JSON Schema não expressa (aresta liga nó existente, nó solto, limite de prompt, só variáveis nativas) são conferidas por scripts/validate_syndie_flow.py. Explicação de cada tipo de nó em skills/syndie-flow-builder/references/schema.md.",
+  "x-limites": {
+    "customGuidelines_max_chars": 1000,
+    "nota_convite_max_chars": 300,
+    "sintaxe_variavel": "{{nome_da_variavel}}",
+    "variaveis_nativas": ["first_name", "last_name", "company", "title"],
+    "observacao": "Variável custom do CSV de upload não é populada pela Syndie. Só as nativas podem aparecer em message, customGuidelines e customComment."
+  },
+  "type": "object",
+  "required": ["version", "metadata", "flow"],
+  "properties": {
+    "version": {"const": "3.0.0"},
+    "metadata": {
+      "type": "object",
+      "required": ["exportedAt", "nodeCount", "edgeCount"],
+      "properties": {
+        "exportedAt": {"type": "string", "description": "ISO 8601 com milissegundos e Z, ex.: 2026-10-01T12:00:00.000Z"},
+        "nodeCount": {"type": "integer", "minimum": 1},
+        "edgeCount": {"type": "integer", "minimum": 0}
+      }
+    },
+    "flow": {
+      "type": "object",
+      "required": ["nodes", "edges"],
+      "properties": {
+        "nodes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/node"}},
+        "edges": {"type": "array", "items": {"$ref": "#/$defs/edge"}}
+      }
+    }
+  },
+  "$defs": {
+    "nodeType": {
+      "enum": [
+        "profile_visit", "send_invite", "linkedin_request_accepted", "merge", "like_post",
+        "withdraw_request", "comment_post", "send_followup", "is_replied_on_linkedin", "add_update_tag"
+      ]
+    },
+    "delayUnit": {"enum": ["minutes", "hours", "days"]},
+    "position": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {"x": {"type": "number"}, "y": {"type": "number"}}
+    },
+    "measured": {
+      "type": "object",
+      "properties": {"width": {"type": "number"}, "height": {"type": "number"}}
+    },
+    "branch": {
+      "type": "object",
+      "required": ["id", "label", "colour"],
+      "properties": {
+        "id": {"enum": ["yes", "no"]},
+        "label": {"type": "string"},
+        "colour": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
+      }
+    },
+    "meta": {
+      "type": "object",
+      "description": "Metadado de exibição. Copiar do fluxo de referência do mesmo tipo de nó; a Syndie usa pra desenhar o nó.",
+      "required": ["type", "title", "category", "nodeCategoryType", "inputs", "outputs", "delayModes", "styleKey"],
+      "properties": {
+        "type": {"$ref": "#/$defs/nodeType"},
+        "title": {"type": "string"},
+        "description": {"type": "string"},
+        "category": {"enum": ["action", "condition"]},
+        "nodeCategoryType": {"enum": ["action", "condition"]},
+        "inputs": {"type": "integer"},
+        "outputs": {"type": "integer"},
+        "delayModes": {"type": "array", "items": {"enum": ["fixed", "waitUntil"]}},
+        "styleKey": {"type": "string"},
+        "selectionLimit": {"type": "integer"},
+        "branchable": {"type": "boolean"},
+        "defaultBranches": {"type": "array", "items": {"$ref": "#/$defs/branch"}}
+      }
+    },
+    "delayConfig": {
+      "type": "object",
+      "properties": {
+        "delayValue": {"type": "integer", "minimum": 0},
+        "delayUnit": {"$ref": "#/$defs/delayUnit"}
+      }
+    },
+    "configByType": {
+      "profile_visit": {"$ref": "#/$defs/delayConfig"},
+      "withdraw_request": {"$ref": "#/$defs/delayConfig"},
+      "linkedin_request_accepted": {"$ref": "#/$defs/delayConfig"},
+      "is_replied_on_linkedin": {"$ref": "#/$defs/delayConfig"},
+      "send_invite": {
+        "allOf": [{"$ref": "#/$defs/delayConfig"}],
+        "properties": {
+          "useAI": {"type": "boolean"},
+          "tone": {"type": "string", "examples": ["Moderate"]},
+          "formality": {"type": "string", "examples": ["Approachable"]},
+          "approach": {"type": "string", "examples": ["Direct"]},
+          "focus": {"type": "string", "examples": ["Business"]},
+          "intention": {"type": "string", "examples": ["Networking"]},
+          "callToAction": {"type": "string", "examples": ["Subtle"]},
+          "personalization": {"type": "string", "examples": ["Specific"]},
+          "language": {"enum": ["portuguese", "english"]},
+          "mentionPost": {"type": "boolean"},
+          "customGuidelines": {"type": "string", "description": "Prompt da IA. Até 1000 caracteres."},
+          "message": {"type": "string", "description": "Texto base ou fallback da nota de convite. Até 300 caracteres."}
+        }
+      },
+      "send_followup": {
+        "allOf": [{"$ref": "#/$defs/delayConfig"}],
+        "properties": {
+          "useAI": {"type": "boolean"},
+          "isFollowUp": {"type": "boolean"},
+          "messageLength": {"type": "string", "examples": ["short"]},
+          "tone": {"type": "string", "examples": ["casual"]},
+          "language": {"enum": ["portuguese", "english"]},
+          "mentionPost": {"type": "boolean"},
+          "customGuidelines": {"type": "string", "description": "Prompt da IA. Até 1000 caracteres."},
+          "message": {"type": "string", "description": "Texto base ou fallback da DM."}
+        }
+      },
+      "like_post": {
+        "allOf": [{"$ref": "#/$defs/delayConfig"}],
+        "properties": {
+          "useAI": {"type": "boolean"},
+          "postCount": {"type": "integer", "minimum": 1},
+          "recentPostWithin": {"type": "integer", "minimum": 1, "description": "Dias."}
+        }
+      },
+      "comment_post": {
+        "allOf": [{"$ref": "#/$defs/delayConfig"}],
+        "properties": {
+          "postCount": {"type": "integer", "minimum": 1},
+          "recentPostWithin": {"type": "integer", "minimum": 1},
+          "useAI": {"type": "boolean"},
+          "length": {"type": "string", "examples": ["short(1 sentence)"]},
+          "commentTone": {"type": "string", "examples": ["neutral"]},
+          "language": {"enum": ["portuguese", "english"]},
+          "contentBlacklist": {"type": "boolean"},
+          "blackListCategories": {"type": "array", "items": {"type": "string"}},
+          "contentType": {"type": "array", "items": {"type": "string"}},
+          "priorityKeyword": {"type": "array", "items": {"type": "string"}},
+          "commentStyle": {"type": "string"},
+          "customGuidelines": {"type": "string", "description": "Prompt da IA. Até 1000 caracteres."},
+          "customComment": {"type": "string"}
+        }
+      },
+      "add_update_tag": {
+        "allOf": [{"$ref": "#/$defs/delayConfig"}],
+        "required": ["tagName"],
+        "properties": {
+          "tagId": {"type": "string", "description": "ID da tag na conta da Syndie. Tag nova: deixar vazio e criar na interface."},
+          "tagName": {"type": "string"},
+          "tagColor": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "position", "data"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(profile_visit|send_invite|linkedin_request_accepted|merge|like_post|withdraw_request|comment_post|send_followup|is_replied_on_linkedin|add_update_tag)-[0-9]+$",
+          "description": "<tipo>-<número único>. O número segue a ordem do fluxo."
+        },
+        "type": {"$ref": "#/$defs/nodeType"},
+        "position": {"$ref": "#/$defs/position"},
+        "measured": {"$ref": "#/$defs/measured"},
+        "selected": {"type": "boolean"},
+        "selectable": {"type": "boolean"},
+        "draggable": {"type": "boolean"},
+        "focusable": {"type": "boolean"},
+        "data": {"type": "object"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "merge"}}},
+          "then": {
+            "description": "Nó de junção dos dois ramos de uma condição. Sem config nem meta.",
+            "properties": {
+              "data": {
+                "type": "object",
+                "required": ["branches"],
+                "properties": {
+                  "branches": {"type": "array", "items": {"$ref": "#/$defs/branch"}},
+                  "animationState": {"type": "string"}
+                }
+              },
+              "selectable": {"const": false},
+              "draggable": {"const": false},
+              "focusable": {"const": false}
+            }
+          },
+          "else": {
+            "properties": {
+              "data": {
+                "type": "object",
+                "required": ["meta", "config", "mergeNodeId", "delayMode"],
+                "properties": {
+                  "meta": {"$ref": "#/$defs/meta"},
+                  "config": {"type": "object"},
+                  "mergeNodeId": {"type": ["string", "null"], "description": "Em nó de condição, o id do merge que fecha os ramos. Nos outros, null."},
+                  "delayMode": {"enum": ["fixed", "waitUntil"]},
+                  "branches": {"type": "array", "items": {"$ref": "#/$defs/branch"}},
+                  "animationState": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"enum": ["linkedin_request_accepted", "is_replied_on_linkedin"]}}},
+          "then": {
+            "description": "Condição: dois ramos (yes, no) e mergeNodeId apontando pro merge.",
+            "properties": {"data": {"required": ["branches"], "properties": {"mergeNodeId": {"type": "string"}}}}
+          }
+        },
+        {"if": {"properties": {"type": {"const": "send_invite"}}}, "then": {"properties": {"data": {"properties": {"config": {"$ref": "#/$defs/configByType/send_invite"}}}}}},
+        {"if": {"properties": {"type": {"const": "send_followup"}}}, "then": {"properties": {"data": {"properties": {"config": {"$ref": "#/$defs/configByType/send_followup"}}}}}},
+        {"if": {"properties": {"type": {"const": "like_post"}}}, "then": {"properties": {"data": {"properties": {"config": {"$ref": "#/$defs/configByType/like_post"}}}}}},
+        {"if": {"properties": {"type": {"const": "comment_post"}}}, "then": {"properties": {"data": {"properties": {"config": {"$ref": "#/$defs/configByType/comment_post"}}}}}},
+        {"if": {"properties": {"type": {"const": "add_update_tag"}}}, "then": {"properties": {"data": {"properties": {"config": {"$ref": "#/$defs/configByType/add_update_tag"}}}}}},
+        {"if": {"properties": {"type": {"enum": ["profile_visit", "withdraw_request", "linkedin_request_accepted", "is_replied_on_linkedin"]}}}, "then": {"properties": {"data": {"properties": {"config": {"$ref": "#/$defs/delayConfig"}}}}}}
+      ]
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "source", "target", "type"],
+      "properties": {
+        "id": {"type": "string", "description": "<source>-<target>"},
+        "source": {"type": "string"},
+        "target": {"type": "string"},
+        "type": {"const": "buttonedge"},
+        "sourceHandle": {"enum": ["yes", "no"], "description": "Só em aresta que sai de nó de condição: qual ramo."},
+        "targetHandle": {"enum": ["yes", "no"], "description": "Só em aresta que entra num merge: de qual ramo ela vem."},
+        "data": {
+          "type": "object",
+          "properties": {
+            "label": {"enum": ["Yes", "No"], "description": "Só em aresta que sai de condição."},
+            "pluscontext": {
+              "type": "object",
+              "required": ["type", "sourceId", "targetId"],
+              "properties": {
+                "type": {"enum": ["edge", "branch-yes", "branch-no"], "description": "branch-yes e branch-no em aresta que sai de condição; edge nas outras."},
+                "sourceId": {"type": "string"},
+                "targetId": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

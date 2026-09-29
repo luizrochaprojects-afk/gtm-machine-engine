@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gtm-machine/schemas/veredito.schema.json",
+  "title": "Veredito de conta",
+  "description": "Saída por conta da validar-lista. Uma conta = um objeto. Os valores de trilha vêm das ofertas do cliente.yaml.",
+  "type": "object",
+  "required": ["domain", "company_name", "veredito", "tier", "trilha", "score", "evidencias", "tecnografia", "primeira_frase", "obs"],
+  "additionalProperties": false,
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domínio normalizado por scripts/normalize_domain.py: sem http, www ou barra final; caixa baixa.",
+      "pattern": "^(?!https?://)(?!www\\.)[a-z0-9.-]+\\.[a-z]{2,}$"
+    },
+    "company_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Nome canônico da conta, igual ao da lista de entrada."
+    },
+    "veredito": {
+      "type": "string",
+      "enum": ["P0", "lista", "nutrir", "fora"]
+    },
+    "tier": {
+      "type": ["integer", "null"],
+      "enum": [1, 2, 3, null],
+      "description": "null quando o veredito é fora."
+    },
+    "trilha": {
+      "type": "string",
+      "minLength": 1,
+      "description": "id de uma oferta do cliente.yaml, 'ambas' ou 'incerta'."
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "is_anti_icp": {
+      "type": "boolean",
+      "description": "true quando um desqualificador duro do gabarito se aplica. Força veredito fora."
+    },
+    "motivo_anti_icp": {
+      "type": "string"
+    },
+    "criterios": {
+      "type": "array",
+      "description": "Resultado de cada critério do gabarito verificado.",
+      "items": {
+        "type": "object",
+        "required": ["id", "met"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "description": "id do critério no gabarito (ex.: F1)."},
+          "met": {"type": "string", "enum": ["sim", "nao", "incerto"]},
+          "evidencia_idx": {"type": "array", "items": {"type": "integer", "minimum": 0}, "description": "Índices em evidencias[] que sustentam o resultado."}
+        }
+      }
+    },
+    "evidencias": {
+      "type": "array",
+      "description": "Toda afirmação do veredito tem fonte. Sem URL, não entra.",
+      "items": {
+        "type": "object",
+        "required": ["fato", "url", "confianca"],
+        "additionalProperties": false,
+        "properties": {
+          "fato": {"type": "string", "minLength": 1},
+          "url": {"type": "string", "pattern": "^https?://"},
+          "confianca": {"type": "string", "enum": ["alta", "media", "baixa"]},
+          "data": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "Data do fato ou da checagem, obrigatória pra sinal perecível."}
+        }
+      }
+    },
+    "tecnografia": {
+      "type": "array",
+      "description": "Saída da detectar-tecnografia pra esta conta.",
+      "items": {
+        "type": "object",
+        "required": ["ferramenta", "fonte", "tipo_evidencia", "confianca"],
+        "additionalProperties": false,
+        "properties": {
+          "ferramenta": {"type": "string"},
+          "fonte": {"type": "string", "pattern": "^https?://"},
+          "tipo_evidencia": {"type": "string", "enum": ["script_html", "vaga", "mencao_publica", "apollo"]},
+          "confianca": {"type": "string", "enum": ["alta", "media", "baixa"]},
+          "leitura": {"type": "string", "enum": ["fit", "troca", "concorrente"]}
+        }
+      }
+    },
+    "primeira_frase": {
+      "type": "string",
+      "description": "Abertura personalizada, 2 frases, 120 a 230 caracteres, conforme doutrina/outbound.md. Vazia quando o veredito é fora ou nutrir.",
+      "maxLength": 230
+    },
+    "primeira_frase_evidencia_idx": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Índice em evidencias[] do fato que sustenta a primeira frase."
+    },
+    "adversarial": {
+      "type": "object",
+      "description": "Resultado da verificação adversarial (contas com score alto).",
+      "required": ["rodou"],
+      "additionalProperties": false,
+      "properties": {
+        "rodou": {"type": "boolean"},
+        "resultado": {"type": "string", "enum": ["mantido", "rebaixado", "derrubado"]},
+        "fatos_refutados": {"type": "array", "items": {"type": "string"}, "description": "Fatos que não podem entrar em copy."},
+        "nota": {"type": "string"}
+      }
+    },
+    "revisar_no_h1": {
+      "type": "boolean",
+      "description": "true pra P0 e pra conta com critério gate incerto."
+    },
+    "obs": {
+      "type": "string",
+      "description": "Ressalvas honestas: domínio a confirmar, comprador real é outra entidade, o que ficou sem verificação."
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"veredito": {"const": "fora"}}},
+      "then": {"properties": {"score": {"maximum": 39}, "primeira_frase": {"maxLength": 0}}}
+    },
+    {
+      "if": {"properties": {"is_anti_icp": {"const": true}}, "required": ["is_anti_icp"]},
+      "then": {"properties": {"veredito": {"const": "fora"}}}
+    }
+  ]
+}

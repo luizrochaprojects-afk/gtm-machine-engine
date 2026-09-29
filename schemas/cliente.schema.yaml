@@ -1,0 +1,192 @@
+# Schema do cliente.yaml
+#
+# Todo workspace tem um cliente.yaml na raiz (clientes/<slug>/cliente.yaml).
+# É o único lugar de onde as skills leem a configuração do cliente.
+# Este arquivo documenta cada campo: tipo, obrigatório ou não, valores aceitos
+# e um exemplo com empresa fictícia. Os valores abaixo são exemplo, não padrão.
+#
+# Convenções:
+#   obrigatorio: true  → a skill setup-workspace não fecha sem o campo.
+#   valores: [...]     → lista fechada; qualquer outro valor é erro.
+#   Datas no formato AAAA-MM-DD, entre aspas.
+
+slug:
+  tipo: texto
+  obrigatorio: true
+  descricao: Identificador do cliente, igual ao nome da pasta em clientes/. Minúsculas, sem acento, hífen no lugar de espaço.
+  exemplo: acme
+
+nome:
+  tipo: texto
+  obrigatorio: true
+  descricao: Nome do cliente como aparece nos documentos.
+  exemplo: Acme Commerce
+
+versao_motor:
+  tipo: texto
+  obrigatorio: true
+  descricao: Versão do motor que o workspace usa (ver CHANGELOG.md). Também declarada no CLAUDE.md do workspace.
+  exemplo: "0.1.0"
+
+ledger_id:
+  tipo: texto
+  obrigatorio: true
+  descricao: ID da planilha Google Sheets do ledger (trecho da URL entre /d/ e /edit).
+  exemplo: "1AbCdEfGhIjKlMnOpQrStUvWxYz0123456789abcdEf"
+
+crm:
+  tipo: texto
+  obrigatorio: true
+  valores: [account-guardian, hubspot, nenhum]
+  descricao: Para onde a registrar-ledger copia contas e contatos, via adapters/<crm>/. "nenhum" = só o ledger.
+  exemplo: nenhum
+
+ofertas:
+  tipo: lista
+  obrigatorio: true
+  descricao: Cada oferta é uma trilha. A trilha de cada conta é decidida na qualificação.
+  itens:
+    id:
+      tipo: texto
+      obrigatorio: true
+      descricao: Identificador curto usado no ledger e nos nomes de rodada. Evitar H0 a H5 e C1 a C3, que colidem com os nomes dos gates e confundem diffs e relatórios.
+      exemplo: plataforma
+    nome:
+      tipo: texto
+      obrigatorio: true
+      exemplo: Plataforma de retenção
+    porta_de_entrada:
+      tipo: texto
+      obrigatorio: true
+      descricao: O primeiro compromisso que o prospect aceita (piloto, diagnóstico, demo).
+      exemplo: piloto de 30 dias contra grupo de controle
+    segmento:
+      tipo: lista de textos
+      obrigatorio: true
+      descricao: Slugs dos segmentos atendidos por essa oferta (pastas em segmentos/).
+      exemplo: [ecommerce-recompra]
+    arquivo:
+      tipo: texto
+      obrigatorio: false
+      descricao: Caminho da oferta escrita, relativo ao workspace.
+      exemplo: estrategia/ofertas/plataforma.md
+    master_copy:
+      tipo: texto
+      obrigatorio: false
+      exemplo: estrategia/master-copy/plataforma.md
+
+stack:
+  tipo: objeto
+  obrigatorio: true
+  campos:
+    crm:
+      tipo: texto
+      descricao: Mesmo valor do campo crm da raiz.
+      exemplo: nenhum
+    sequenciador_email:
+      tipo: texto
+      valores: [apollo, nenhum]
+      exemplo: apollo
+    linkedin:
+      tipo: texto
+      valores: [syndie, manual, nenhum]
+      exemplo: syndie
+    fonte_contexto:
+      tipo: lista de textos
+      valores: [granola, pdf, transcricao, export-crm, deck, site]
+      obrigatorio: false
+      exemplo: [granola, site]
+
+remetentes:
+  tipo: objeto
+  obrigatorio: true
+  campos:
+    perfil_linkedin:
+      tipo: objeto
+      obrigatorio: false
+      campos:
+        nome: {tipo: texto, exemplo: Ana Souza}
+        url: {tipo: texto, exemplo: "https://www.linkedin.com/in/ana-souza-exemplo"}
+        ferramenta: {tipo: texto, valores: [syndie, manual], exemplo: syndie}
+        convites_por_semana: {tipo: número, exemplo: 100}
+    caixas_email:
+      tipo: lista
+      obrigatorio: false
+      descricao: Caixas de envio do sequenciador. Caixa sem aquecimento completo não entra em rodada.
+      itens:
+        email: {tipo: texto, obrigatorio: true, exemplo: ana@acme-mail.com}
+        limite_diario: {tipo: número, obrigatorio: true, descricao: "Envios por dia. Teto do motor: 30.", exemplo: 25}
+        aquecimento_inicio: {tipo: texto (data), obrigatorio: true, exemplo: "2026-09-01"}
+        aquecida_em: {tipo: texto (data), obrigatorio: false, descricao: "Data em que o aquecimento de 14 dias fechou.", exemplo: "2026-09-15"}
+        assinatura: {tipo: texto, obrigatorio: false, exemplo: "Abs, Ana."}
+    janela_envio:
+      tipo: objeto
+      obrigatorio: false
+      campos:
+        dias: {tipo: lista de textos, exemplo: [seg, ter, qua, qui, sex]}
+        inicio: {tipo: texto, exemplo: "08:00"}
+        fim: {tipo: texto, exemplo: "18:00"}
+        fuso: {tipo: texto, exemplo: America/Sao_Paulo}
+
+gates:
+  tipo: objeto
+  obrigatorio: true
+  descricao: Dono de cada gate. Pode ser mais de uma pessoa.
+  campos:
+    H0: {descricao: estratégia, exemplo: [operador, aprovador]}
+    H1: {descricao: lista, exemplo: [operador]}
+    H2: {descricao: copy, exemplo: [operador]}
+    H3: {descricao: lançamento, exemplo: [operador]}
+    C1: {descricao: "estratégia, lado do cliente", exemplo: [aprovador]}
+    C2: {descricao: "voz, lado do cliente", exemplo: [aprovador]}
+    C3: {descricao: "resultado da reunião, lado do cliente", exemplo: [vendedor]}
+  pessoas:
+    descricao: Mapa papel → nome e contato. Fica só no workspace.
+    exemplo:
+      operador: {nome: Operador Exemplo, email: operador@exemplo.com}
+      aprovador: {nome: Ana Souza, email: ana@acme.com}
+      vendedor: {nome: Bruno Lima, email: bruno@acme.com}
+
+supressao:
+  tipo: lista de textos
+  obrigatorio: true
+  descricao: Caminhos (relativos ao workspace) dos arquivos de supressão importados uma vez pra aba supressao do ledger. Depois do import, a supressão lê só o ledger. O campo tem que existir, mas lista vazia é aceita; nesse caso a primeira rodada suprime só pelo histórico do ledger.
+  exemplo: [supressao/clientes-ativos.csv, supressao/optout.csv]
+
+tecnografia_alvo:
+  tipo: lista
+  obrigatorio: false
+  descricao: Ferramentas que a detectar-tecnografia procura em cada conta.
+  itens:
+    nome: {tipo: texto, exemplo: Klaviyo}
+    categoria: {tipo: texto, exemplo: email-marketing}
+    sinais_html: {tipo: lista de textos, obrigatorio: false, descricao: "Trechos de script ou domínio que denunciam a ferramenta no HTML.", exemplo: [static.klaviyo.com, klaviyo.js]}
+    leitura: {tipo: texto, valores: [fit, troca, concorrente], descricao: "fit = confirma o ICP; troca = sinal de possível troca; concorrente = a conta já usa algo equivalente ao que o cliente vende.", exemplo: fit}
+
+personas:
+  tipo: lista
+  obrigatorio: true
+  descricao: Quem abordar por porte de conta. Usada pela mapear-comite.
+  itens:
+    porte:
+      tipo: texto
+      descricao: Faixa de funcionários, no formato do Apollo.
+      exemplo: 51-200
+    cargos:
+      tipo: lista de textos
+      exemplo: [ceo, founder, sócio]
+    papel:
+      tipo: texto
+      valores: [decisor, champion, influenciador]
+      exemplo: decisor
+    maximo_por_conta:
+      tipo: número
+      obrigatorio: false
+      exemplo: 1
+
+cadencia:
+  tipo: objeto
+  obrigatorio: false
+  campos:
+    email_passos: {tipo: lista de textos, exemplo: [D1, D4, D8, D13]}
+    linkedin_passos: {tipo: lista de textos, exemplo: [convite, dm1, dm2]}

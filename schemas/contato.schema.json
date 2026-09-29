@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gtm-machine/schemas/contato.schema.json",
+  "title": "Contato",
+  "description": "Saída por contato da mapear-comite. Uma linha de 03-contatos.csv = um objeto. Colunas do CSV na ordem das propriedades obrigatórias, depois as opcionais.",
+  "type": "object",
+  "required": ["domain", "nome", "cargo", "papel", "email", "email_status", "linkedin_url", "canal"],
+  "additionalProperties": false,
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domínio normalizado da conta.",
+      "pattern": "^(?!https?://)(?!www\\.)[a-z0-9.-]+\\.[a-z]{2,}$"
+    },
+    "nome": {"type": "string", "minLength": 1, "description": "Nome completo, com acento."},
+    "primeiro_nome": {"type": "string", "description": "Como a pessoa é chamada no email. Sem sobrenome."},
+    "cargo": {"type": "string", "minLength": 1, "description": "Cargo conferido na data da rodada."},
+    "cargo_checado_em": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "papel": {"type": "string", "enum": ["decisor", "champion", "influenciador"]},
+    "email": {
+      "type": "string",
+      "description": "Vazio quando não há email.",
+      "anyOf": [{"maxLength": 0}, {"format": "email"}]
+    },
+    "email_status": {
+      "type": "string",
+      "enum": ["verified", "likely", "unverified", "invalid", "sem_email"],
+      "description": "Status devolvido pelo enrich do Apollo; sem_email quando o enrich não achou."
+    },
+    "linkedin_url": {
+      "type": "string",
+      "description": "URL pública do perfil. Vazia só quando o canal é email.",
+      "anyOf": [{"maxLength": 0}, {"pattern": "^https://(www\\.)?linkedin\\.com/in/[^/?#]+/?$"}]
+    },
+    "canal": {
+      "type": "string",
+      "enum": ["email", "linkedin", "ambos"],
+      "description": "Sem email verified → linkedin. Sem linkedin_url → email (só se verified). Os dois → ambos."
+    },
+    "ordem_na_conta": {"type": "integer", "minimum": 1, "maximum": 3},
+    "company_name": {"type": "string"},
+    "primeira_frase": {"type": "string", "maxLength": 230, "description": "Copiada do veredito da conta (casando por domain) pela mapear-comite, pra que 03-contatos.csv alimente sozinho o render e o import. Vazia se o veredito não tem ou se o fato foi refutado."},
+    "segmento": {"type": "string"},
+    "trilha": {"type": "string"},
+    "apollo_person_id": {"type": "string"},
+    "fonte": {"type": "string", "description": "apollo_search, apollo_match, manual."}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"canal": {"enum": ["email", "ambos"]}}},
+      "then": {"properties": {"email_status": {"const": "verified"}, "email": {"minLength": 3}}}
+    },
+    {
+      "if": {"properties": {"canal": {"enum": ["linkedin", "ambos"]}}},
+      "then": {"properties": {"linkedin_url": {"minLength": 20}}}
+    }
+  ]
+}

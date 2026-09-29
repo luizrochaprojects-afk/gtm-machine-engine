@@ -1,0 +1,83 @@
+# cliente.yaml do workspace. Formato e exemplos em ../../schemas/cliente.schema.yaml.
+# Preenchido pela setup-workspace, um bloco por vez. Datas no formato "AAAA-MM-DD".
+
+# --- identidade ---
+slug: ""            # igual ao nome da pasta em clientes/
+nome: ""            # nome do cliente como aparece nos documentos
+versao_motor: ""    # lida do CHANGELOG.md do motor
+ledger_id: ""       # ID da planilha do ledger (entre /d/ e /edit na URL)
+crm: ""             # account-guardian, hubspot ou nenhum
+
+# --- ofertas ---
+# Uma entrada por oferta. id não pode ser H0 a H5 nem C1 a C3.
+ofertas: []
+#  - id: ""
+#    nome: ""
+#    porta_de_entrada: ""     # primeiro compromisso que o prospect aceita
+#    segmento: []             # slugs das pastas em segmentos/
+#    arquivo: ""              # ex.: estrategia/ofertas/<id>.md
+#    master_copy: ""          # ex.: estrategia/master-copy/<id>.md
+
+# --- stack ---
+stack:
+  crm: ""                  # mesmo valor do crm acima
+  sequenciador_email: ""   # apollo ou nenhum
+  linkedin: ""             # syndie, manual ou nenhum
+  fonte_contexto: []       # granola, pdf, transcricao, export-crm, deck, site
+
+# --- remetentes ---
+remetentes:
+  perfil_linkedin:
+    nome: ""
+    url: ""
+    ferramenta: ""           # syndie ou manual
+    convites_por_semana:     # número
+  caixas_email: []
+  #  - email: ""
+  #    limite_diario:        # número, teto do motor: 30
+  #    aquecimento_inicio: ""
+  #    aquecida_em: ""        # vazio = ainda aquecendo, não entra em rodada
+  #    assinatura: ""
+  janela_envio:
+    dias: []                 # ex.: [seg, ter, qua, qui, sex]
+    inicio: ""               # ex.: "08:00"
+    fim: ""
+    fuso: ""                 # ex.: America/Sao_Paulo
+
+# --- gates ---
+# Dono de cada gate, por papel. Os papéis são definidos em pessoas.
+gates:
+  H0: []    # estratégia
+  H1: []    # lista
+  H2: []    # copy
+  H3: []    # lançamento
+  C1: []    # estratégia, lado do cliente
+  C2: []    # voz, lado do cliente
+  C3: []    # resultado da reunião, lado do cliente
+  pessoas: {}
+  #  operador: {nome: "", email: ""}
+  #  aprovador: {nome: "", email: ""}
+  #  vendedor: {nome: "", email: ""}
+
+# --- supressão ---
+# Caminhos relativos ao workspace. Importados uma vez para a aba supressao do ledger.
+supressao: []
+
+# --- tecnografia alvo ---
+tecnografia_alvo: []
+#  - nome: ""
+#    categoria: ""
+#    sinais_html: []
+#    leitura: ""      # fit, troca ou concorrente
+
+# --- personas ---
+personas: []
+#  - porte: ""        # faixa de funcionários no formato do Apollo, ex.: 51-200
+#    cargos: []
+#    papel: ""        # decisor, champion ou influenciador
+#    maximo_por_conta:
+
+# --- cadência (opcional) ---
+cadencia:
+  email_passos: []      # padrão do motor: [D1, D4, D8, D13]
+  linkedin_passos: []   # ex.: [convite, dm1, dm2]

@@ -1,0 +1,13 @@
+# segredos e arquivos locais
+.env
+*.local.*
+__pycache__/
+.pytest_cache/
+
+# dado de cliente nunca entra no git do motor:
+# cada cliente é um repositório privado próprio dentro de clientes/
+clientes/*
+!clientes/.gitkeep
+
+# lista de termos proibidos (nomes de clientes, pessoas, IDs)
+scripts/termos-clientes.txt
